@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service — Stars Converter Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Theme Variables */
+        :root, [data-theme="dark"] {
+            --bg: #0f1115;
+            --surface: #16181d;
+            --surface-border: #22262e;
+            --accent: #38bdf8;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --icon-bg: rgba(56, 189, 248, 0.08);
+            --header-bg: rgba(15, 17, 21, 0.9);
+            --callout-bg: rgba(255, 255, 255, 0.03);
+            --theme-btn-hover: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --surface-border: #e2e8f0;
+            --accent: #0ea5e9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --icon-bg: rgba(14, 165, 233, 0.08);
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --callout-bg: rgba(0, 0, 0, 0.03);
+            --theme-btn-hover: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        html[dir="rtl"] body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        /* Language Toggle Classes */
+        .lang-en, .lang-ar, .lang-ru { display: none; }
+        html[lang="en"] .lang-en { display: block; }
+        html[lang="en"] span.lang-en { display: inline; }
+        html[lang="ar"] .lang-ar { display: block; }
+        html[lang="ar"] span.lang-ar { display: inline; }
+        html[lang="ru"] .lang-ru { display: block; }
+        html[lang="ru"] span.lang-ru { display: inline; }
+
+        /* Acton Tree Sidebar Styles */
+        .sidebar-container {
+            position: relative;
+            padding-left: 12px;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-static-line {
+            position: absolute;
+            top: 0; bottom: 0; left: 0;
+            width: 1px;
+            background-color: var(--surface-border);
+        }
+
+        .sidebar-active-branch {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 12px;
+            border-left: 1px solid var(--accent);
+            border-bottom: 1px solid var(--accent);
+            border-bottom-left-radius: 6px;
+            transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .sidebar-active-branch::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            bottom: -3px;
+            width: 5px;
+            height: 5px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .sidebar-link {
+            padding-left: 12px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+        }
+
+        .sidebar-link:hover { color: var(--text-main); }
+        .sidebar-link.active { color: var(--accent); font-weight: 600; }
+
+        /* RTL Sidebar Support */
+        html[dir="rtl"] .sidebar-container { padding-left: 0; padding-right: 12px; }
+        html[dir="rtl"] .sidebar-static-line { left: auto; right: 0; }
+        html[dir="rtl"] .sidebar-active-branch {
+            left: auto; right: 0;
+            border-left: none; border-right: 1px solid var(--accent);
+            border-bottom-left-radius: 0; border-bottom-right-radius: 6px;
+        }
+        html[dir="rtl"] .sidebar-active-branch::after { right: auto; left: -3px; }
+        html[dir="rtl"] .sidebar-link { padding-left: 0; padding-right: 12px; }
+
+        /* Header Language Switcher - Exact Match with your Image */
+        .lang-switch-wrapper {
+            background-color: #1c212b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 100px;
+            padding: 4px;
+            display: flex;
+            gap: 2px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            color: #4b5563; 
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 6px 16px;
+            border-radius: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background-color: #10b981; /* Emerald Green */
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+        
+        [data-theme="light"] .lang-switch-wrapper {
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+        [data-theme="light"] .lang-btn {
+            color: #94a3b8;
+        }
+        [data-theme="light"] .lang-btn.active {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+
+        /* Sun/Moon Icon Styling */
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: #f59e0b; /* Golden Yellow for Sun */
+            background: transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        [data-theme="dark"] .theme-toggle-btn {
+            color: #f8fafc; /* White for Moon */
+        }
+        .theme-toggle-btn:hover {
+            background-color: var(--theme-btn-hover);
+        }
+
+        /* View Transitions API (Modern Ripple Effect) */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation: none;
+            mix-blend-mode: normal;
+        }
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+        ::view-transition-new(root) {
+            z-index: 2;
+        }
+
+        /* Article & Callout Styles */
+        .article {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--surface-border);
+            scroll-margin-top: 80px;
+        }
+
+        .icon-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px; height: 44px;
+            background: var(--icon-bg);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 12px;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+        .icon-wrap svg { width: 24px; height: 24px; }
+
+        .callout {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            background: var(--callout-bg);
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+        html[dir="rtl"] .callout { border-left: none; border-right: 3px solid var(--accent); }
+
+        .callout-warn { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .callout-danger { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+        .list-item {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .list-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        html[dir="rtl"] .list-item { padding-left: 0; padding-right: 1.5rem; }
+        html[dir="rtl"] .list-item::before { left: auto; right: 0; }
+
+        .header-bg {
+            background-color: var(--header-bg);
+            border-bottom-color: var(--surface-border);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md header-bg border-b">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                <span class="font-bold tracking-wide">Stars Converter Bot</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="lang-switch-wrapper">
+                    <button class="lang-btn active" onclick="setLang('en', this)">EN</button>
+                    <button class="lang-btn" onclick="setLang('ar', this)">AR</button>
+                    <button class="lang-btn" onclick="setLang('ru', this)">RU</button>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme(event)" aria-label="Toggle Theme">
+                    <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 pt-28 pb-24 grid lg:grid-cols-[260px_1fr] gap-16">
+        
+        <!-- Acton-style Sidebar -->
+        <aside class="hidden lg:block sticky top-28 h-fit">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+                <span class="lang-en">On this page</span>
+                <span class="lang-ar">في هذه الصفحة</span>
+                <span class="lang-ru">На этой странице</span>
+            </h3>
+            <nav class="sidebar-container" id="sidebar-nav">
+                <div class="sidebar-static-line"></div>
+                <div class="sidebar-active-branch" id="sidebar-indicator"></div>
+                
+                <a href="#art1" class="sidebar-link active">Article 01</a>
+                <a href="#art2" class="sidebar-link">Article 02</a>
+                <a href="#art3" class="sidebar-link">Article 03</a>
+                <a href="#art4" class="sidebar-link">Article 04</a>
+                <a href="#art5" class="sidebar-link">Article 05</a>
+                <a href="#art6" class="sidebar-link">Article 06</a>
+                <a href="#art7" class="sidebar-link">Article 07</a>
+                <a href="#art8" class="sidebar-link">Article 08</a>
+                <a href="#art9" class="sidebar-link">Article 09</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="max-w-3xl" id="content-container">
+            <h1 class="text-4xl md:text-5xl font-bold mb-12 text-[var(--accent)]">Terms of Service</h1>
+            <!-- Content will be injected by JavaScript -->
+        </main>
+    </div>
+
+    <!-- Contact Banner -->
+    <div class="border-t border-[var(--surface-border)] bg-[var(--bg)] transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-[var(--surface-border)] flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-[var(--text-main)] lang-en">Need help or have a dispute?</h4>
+                    <h4 class="font-bold text-[var(--text-main)] lang-ar">هل تحتاج إلى مساعدة أو لديك نزاع؟</h4>
+                    <h4 class="font-bold text-[var(--text-main)] lang-ru">Нужна помощь или есть спор?</h4>
+                    <p class="text-sm text-[var(--text-muted)] lang-en">Contact our support team before initiating any external dispute process.</p>
+                    <p class="text-sm text-[var(--text-muted)] lang-ar">تواصل مع فريق الدعم الخاص بنا قبل بدء أي عملية نزاع خارجية.</p>
+                    <p class="text-sm text-[var(--text-muted)] lang-ru">Свяжитесь с нашей службой поддержки перед инициацией любого внешнего процесса спора.</p>
+                </div>
+            </div>
+            <a href="https://t.me/Convertersuppbot" class="px-6 py-2.5 bg-[var(--surface-border)] hover:bg-[var(--theme-btn-hover)] text-[var(--text-main)] rounded-lg text-sm font-semibold transition-colors border border-[var(--surface-border)]">Contact Support</a>
+        </div>
+    </div>
+
+    <script>
+        // Premium Dual-Tone SVGs
+        const ICONS = {
+            database: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3" fill="currentColor" fill-opacity="0.15"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12" opacity="0.4"/></svg>`,
+            execution: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" fill-opacity="0.15"/></svg>`,
+            wallet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" fill="currentColor" fill-opacity="0.1"/><path d="M2 10h20" opacity="0.4"/><path d="M16 14h.01" stroke-width="2"/></svg>`,
+            user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="currentColor" fill-opacity="0.15"/><path d="M22 21v-2a4 4 0 0 0-3-3.87" opacity="0.4"/><path d="M16 3.13a4 4 0 0 1 0 7.75" opacity="0.4"/></svg>`,
+            verify: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fill-opacity="0.15"/><path d="M9 12l2 2 4-4"/></svg>`,
+            warning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="currentColor" fill-opacity="0.15"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="2"/></svg>`,
+            trend: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" opacity="0.4"/><path d="M18 9l-5 5-3-3-5 5"/><path d="M18 9v5m0-5h-5" opacity="0.5"/><circle cx="18" cy="9" r="2" fill="currentColor" fill-opacity="0.2"/></svg>`,
+            document: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="currentColor" fill-opacity="0.05"/><path d="M14 2v6h6"/><path d="M16 13H8" opacity="0.4"/><path d="M16 17H8" opacity="0.4"/><path d="M10 9H8" opacity="0.4"/></svg>`,
+            star: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" fill-opacity="0.15"/></svg>`
+        };
+
+        const ARTICLES = [
+            {
+                id: "art1", icon: ICONS.database,
+                title: { en: "Data Collection", ar: "جمع البيانات", ru: "Сбор данных" },
+                content: {
+                    en: `<p class="mb-4">We collect and process the following personal data to operate the service:</p><div class="list-item"><strong class="text-[var(--text-main)]">Telegram Username</strong> — your public handle associated with your account</div><div class="list-item"><strong class="text-[var(--text-main)]">Telegram ID</strong> — your unique numeric identifier on the Telegram platform</div><div class="list-item"><strong class="text-[var(--text-main)]">Contact Information</strong> — phone number or other contact data shared via the platform</div><div class="callout text-[var(--text-main)]">All collected data is used exclusively for service operation and security purposes. It is disclosed to third parties only when mandated by applicable law.</div>`,
+                    ar: `<p class="mb-4">نقوم بجمع ومعالجة البيانات الشخصية التالية لتشغيل الخدمة:</p><div class="list-item"><strong class="text-[var(--text-main)]">اسم مستخدم تيليجرام</strong> — المعرف العام المرتبط بحسابك</div><div class="list-item"><strong class="text-[var(--text-main)]">معرف تيليجرام</strong> — المعرف الرقمي الفريد الخاص بك على المنصة</div><div class="list-item"><strong class="text-[var(--text-main)]">معلومات الاتصال</strong> — رقم الهاتف أو بيانات الاتصال الأخرى المشاركة عبر المنصة</div><div class="callout text-[var(--text-main)]">تُستخدم جميع البيانات المجمعة حصرياً لأغراض تشغيل الخدمة والأمان. ولا يتم الكشف عنها لأطراف ثالثة إلا عندما يقتضي القانون المعمول به ذلك.</div>`,
+                    ru: `<p class="mb-4">Мы собираем и обрабатываем следующие персональные данные для работы сервиса:</p><div class="list-item"><strong class="text-[var(--text-main)]">Имя пользователя Telegram</strong> — ваш публичный идентификатор, связанный с аккаунтом</div><div class="list-item"><strong class="text-[var(--text-main)]">ID Telegram</strong> — ваш уникальный числовой идентификатор на платформе Telegram</div><div class="list-item"><strong class="text-[var(--text-main)]">Контактная информация</strong> — номер телефона или другие контактные данные, переданные через платформу</div><div class="callout text-[var(--text-main)]">Все собранные данные используются исключительно для работы сервиса и в целях безопасности. Они раскрываются третьим лицам только в случаях, предусмотренных применимым законодательством.</div>`
+                }
+            },
+            {
+                id: "art2", icon: ICONS.execution,
+                title: { en: "Transaction Execution", ar: "تنفيذ المعاملات", ru: "Выполнение транзакций" },
+                content: {
+                    en: `<p class="mb-4">All transactions are processed instantly upon confirmation by default. This is the standard and expected mode of operation.</p><div class="callout callout-warn flex gap-3 text-[var(--text-main)]"><svg class="w-6 h-6 flex-shrink-0 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><div>The platform administrator reserves the right, at their sole discretion, to place any individual transaction under a deferred execution period of up to fifteen (15) days. Such holds are applied in exceptional cases only and are not representative of normal service behaviour.</div></div>`,
+                    ar: `<p class="mb-4">تتم معالجة جميع المعاملات بشكل فوري عند التأكيد كوضع افتراضي. هذا هو وضع التشغيل القياسي والمتوقع.</p><div class="callout callout-warn flex gap-3 text-[var(--text-main)]"><svg class="w-6 h-6 flex-shrink-0 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><div>يحتفظ مسؤول المنصة بالحق، وفقًا لتقديره الخاص، في وضع أي معاملة فردية تحت فترة تنفيذ مؤجلة تصل إلى خمسة عشر (١٥) يومًا. يتم تطبيق عمليات التعليق هذه في حالات استثنائية فقط ولا تمثل سلوك الخدمة الطبيعي.</div></div>`,
+                    ru: `<p class="mb-4">Все транзакции обрабатываются мгновенно после подтверждения по умолчанию. Это стандартный и ожидаемый режим работы.</p><div class="callout callout-warn flex gap-3 text-[var(--text-main)]"><svg class="w-6 h-6 flex-shrink-0 text-yellow-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><div>Администратор платформы оставляет за собой право, по своему собственному усмотрению, поместить любую отдельную транзакцию в период отложенного выполнения на срок до пятнадцати (15) дней. Такие задержки применяются только в исключительных случаях и не являются нормальным поведением сервиса.</div></div>`
+                }
+            },
+            {
+                id: "art3", icon: ICONS.wallet,
+                title: { en: "Payouts & Supported Wallets", ar: "المدفوعات والمحافظ المدعومة", ru: "Выплаты и поддерживаемые кошельки" },
+                content: {
+                    en: `<p class="mb-4">Payouts are issued exclusively in USDT on the TON blockchain network. Transfers are supported to any wallet address or centralised exchange address.</p><div class="callout callout-danger text-[var(--text-main)]"><strong>⚠️ MEMO / Tag Required</strong><br>Wallet addresses or exchange deposit addresses that require a MEMO, Tag, or comment field for identification are strictly not supported. The platform bears no liability for funds sent to such addresses where a MEMO was not provided.</div>`,
+                    ar: `<p class="mb-4">يتم إصدار المدفوعات حصريًا بـ USDT على شبكة TON. يتم دعم التحويلات إلى أي عنوان محفظة أو عنوان إيداع تبادل مركزي.</p><div class="callout callout-danger text-[var(--text-main)]"><strong>⚠️ مطلوب MEMO / Tag</strong><br>عناوين المحافظ أو عناوين إيداع البورصة التي تتطلب حقل MEMO أو Tag أو تعليق لتحديد الهوية غير مدعومة بشكل صارم. المنصة لا تتحمل أي مسؤولية عن الأموال المرسلة إلى مثل هذه العناوين حيث لم يتم توفير MEMO.</div>`,
+                    ru: `<p class="mb-4">Выплаты осуществляются исключительно в USDT в сети блокчейн TON. Поддерживаются переводы на любой адрес кошелька или адрес централизованной биржи.</p><div class="callout callout-danger text-[var(--text-main)]"><strong>⚠️ Требуется MEMO / Tag</strong><br>Адреса кошельков или депозитные адреса бирж, требующие поле MEMO, Tag или комментарий для идентификации, строго не поддерживаются. Платформа не несет ответственности за средства, отправленные на такие адреса, если MEMO не было указано.</div>`
+                }
+            },
+            {
+                id: "art4", icon: ICONS.user,
+                title: { en: "New User Transaction Policy", ar: "سياسة معاملات المستخدم الجديد", ru: "Политика транзакций новых пользователей" },
+                content: {
+                    en: `<div class="list-item"><strong class="text-[var(--text-main)]">Instant Allowance:</strong> New users may sell between <strong>250 to 500 Stars</strong> immediately, without any holding period. The exact allowed amount within this range is determined dynamically by the platform administrator.</div><div class="list-item"><strong class="text-[var(--text-main)]">Security Hold — Threshold Exceeded:</strong> Any transaction volume exceeding the dynamically set threshold (250-500 Stars) is subject to a 14-day security hold. This hold exists to protect both the user and the platform against fraudulent activity.</div><div class="callout"><strong class="text-[var(--text-main)] block mb-1">Expedited Processing</strong>To bypass the 14-day hold, submit verifiable proof of your Stars' source as outlined in <a href="#art5" class="text-[var(--accent)] hover:underline font-semibold">Article 05</a>.</div>`,
+                    ar: `<div class="list-item"><strong class="text-[var(--text-main)]">السماح الفوري:</strong> يجوز للمستخدمين الجدد بيع ما بين <strong>250 إلى 500 نجمة</strong> على الفور، دون أي فترة انتظار. يتم تحديد الكمية الدقيقة المسموح بها ضمن هذا النطاق ديناميكيًا بواسطة مسؤول المنصة.</div><div class="list-item"><strong class="text-[var(--text-main)]">تعليق الأمان — تجاوز الحد:</strong> أي حجم معاملة يتجاوز الحد المعين ديناميكيًا (250-500 نجمة) يخضع لتعليق أمني لمدة 14 يومًا. يوجد هذا التعليق لحماية كل من المستخدم والمنصة من النشاط الاحتيالي.</div><div class="callout"><strong class="text-[var(--text-main)] block mb-1">المعالجة المعجلة</strong>لتجاوز تعليق الـ 14 يومًا، أرسل دليلاً يمكن التحقق منه على مصدر النجوم الخاصة بك كما هو موضح في <a href="#art5" class="text-[var(--accent)] hover:underline font-semibold">المادة 05</a>.</div>`,
+                    ru: `<div class="list-item"><strong class="text-[var(--text-main)]">Мгновенное разрешение:</strong> Новые пользователи могут немедленно продать от <strong>250 до 500 Stars</strong> без какого-либо периода удержания. Точная сумма в этом диапазоне динамически определяется администратором платформы.</div><div class="list-item"><strong class="text-[var(--text-main)]">Удержание безопасности — Порог превышен:</strong> Любой объем транзакций, превышающий динамически установленный порог (250-500 Stars), подлежит 14-дневному удержанию безопасности. Это удержание существует для защиты как пользователя, так и платформы от мошеннических действий.</div><div class="callout"><strong class="text-[var(--text-main)] block mb-1">Ускоренная обработка</strong>Чтобы обойти 14-дневное удержание, предоставьте проверяемое доказательство источника ваших Stars, как указано в <a href="#art5" class="text-[var(--accent)] hover:underline font-semibold">Статье 05</a>.</div>`
+                }
+            },
+            {
+                id: "art5", icon: ICONS.verify,
+                title: { en: "Source Verification", ar: "التحقق من المصدر", ru: "Проверка источника" },
+                content: {
+                    en: `<p class="mb-4">Expedited processing — bypassing the 14-day hold — is available upon submission of accepted proof of Stars origin. The following are the only accepted forms of verification:</p><div class="list-item"><strong class="text-[var(--text-main)]">Fragment Platform</strong> — a purchase receipt or verifiable transaction record from the Fragment platform</div><div class="list-item"><strong class="text-[var(--text-main)]">App Store Invoice</strong> — a Google Play or Apple App Store invoice, provided the purchase date is at least one (1) full calendar month prior to the date of the request</div><div class="callout text-[var(--text-main)]">Submitted proof is reviewed by the platform administrator. Approval is at their sole discretion. Falsified or manipulated evidence may result in permanent account suspension.</div>`,
+                    ar: `<p class="mb-4">المعالجة المعجلة — تجاوز تعليق الـ 14 يومًا — متاحة عند تقديم دليل مقبول على أصل النجوم. النماذج التالية هي الوحيدة المقبولة للتحقق:</p><div class="list-item"><strong class="text-[var(--text-main)]">منصة Fragment</strong> — إيصال شراء أو سجل معاملة يمكن التحقق منه من منصة Fragment</div><div class="list-item"><strong class="text-[var(--text-main)]">فاتورة متجر التطبيقات</strong> — فاتورة Google Play أو Apple App Store، بشرط أن يكون تاريخ الشراء قبل شهر تقويمي كامل واحد (1) على الأقل من تاريخ الطلب</div><div class="callout text-[var(--text-main)]">يتم مراجعة الدليل المقدم من قبل مسؤول المنصة. الموافقة حسب تقديرهم الخاص. قد تؤدي الأدلة المزيفة أو المتلاعب بها إلى تعليق الحساب الدائم.</div>`,
+                    ru: `<p class="mb-4">Ускоренная обработка — обход 14-дневного удержания — доступна при предоставлении принятого доказательства происхождения Stars. Ниже приведены единственно принятые формы проверки:</p><div class="list-item"><strong class="text-[var(--text-main)]">Платформа Fragment</strong> — квитанция о покупке или проверяемая запись транзакции с платформы Fragment</div><div class="list-item"><strong class="text-[var(--text-main)]">Счет-фактура App Store</strong> — счет Google Play или Apple App Store, при условии, что дата покупки по крайней мере на один (1) полный календарный месяц предшествует дате запроса</div><div class="callout text-[var(--text-main)]">Предоставленные доказательства рассматриваются администратором платформы. Одобрение остается на их усмотрение. Фальсифицированные или подделанные доказательства могут привести к постоянной блокировке аккаунта.</div>`
+                }
+            },
+            {
+                id: "art6", icon: ICONS.warning,
+                title: { en: "Chargeback & Refund Policy", ar: "سياسة رد المبالغ والاسترداد", ru: "Политика чарджбеков и возвратов" },
+                content: {
+                    en: `<p class="mb-4">Any user who initiates a chargeback, payment dispute, or any form of unauthorised refund on Stars previously exchanged through this platform will be subject to the following enforcement measures, applied at the administrator's sole and absolute discretion:</p><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Immediate Blacklisting</strong>The account is immediately blacklisted. All pending and future transactions are suspended for a period determined exclusively by the administrator.</div><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Asset Confiscation</strong>The administrator reserves the right to confiscate an equivalent value of Stars held within the platform as compensation for damages incurred.</div><div class="callout callout-danger text-[var(--text-main)]">By using this platform you acknowledge that chargebacks cause direct financial harm and that the above measures constitute a proportionate and agreed-upon remedy.</div>`,
+                    ar: `<p class="mb-4">أي مستخدم يبدأ برد المبالغ المدفوعة أو نزاع على الدفع أو أي شكل من أشكال الاسترداد غير المصرح به للنجوم التي تم تبادلها مسبقًا عبر هذه المنصة سيخضع لتدابير الإنفاذ التالية، المطبقة وفقًا للتقدير المطلق والخاص للمسؤول:</p><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">الإدراج الفوري في القائمة السوداء</strong>يتم إدراج الحساب فوراً في القائمة السوداء. يتم تعليق جميع المعاملات المعلقة والمستقبلية لفترة يحددها المسؤول حصرياً.</div><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">مصادرة الأصول</strong>يحتفظ المسؤول بالحق في مصادرة قيمة معادلة للنجوم المحتجزة داخل المنصة كتعويض عن الأضرار المتكبدة.</div><div class="callout callout-danger text-[var(--text-main)]">باستخدام هذه المنصة، فإنك تقر بأن عمليات رد المبالغ المدفوعة تسبب ضرراً مالياً مباشراً وأن التدابير المذكورة أعلاه تشكل علاجاً متناسباً ومتفقاً عليه.</div>`,
+                    ru: `<p class="mb-4">Любой пользователь, инициирующий чарджбек, платежный спор или любую форму несанкционированного возврата Stars, ранее обмененных через эту платформу, будет подвергнут следующим мерам принуждения, применяемым по исключительному и абсолютному усмотрению администратора:</p><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Немедленное занесение в черный список</strong>Аккаунт немедленно заносится в черный список. Все ожидающие и будущие транзакции приостанавливаются на период, определяемый исключительно администратором.</div><div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Конфискация активов</strong>Администратор оставляет за собой право конфисковать эквивалентную стоимость Stars, удерживаемых на платформе, в качестве компенсации за понесенный ущерб.</div><div class="callout callout-danger text-[var(--text-main)]">Используя эту платформу, вы признаете, что чарджбеки причиняют прямой финансовый ущерб, и что вышеуказанные меры представляют собой соразмерное и согласованное средство правовой защиты.</div>`
+                }
+            },
+            {
+                id: "art7", icon: ICONS.trend,
+                title: { en: "Dynamic Pricing", ar: "التسعير الديناميكي", ru: "Динамическое ценообразование" },
+                content: {
+                    en: `<p class="mb-4">The Stars exchange rate is variable and determined by prevailing market conditions, including supply and demand dynamics. Rates may increase or decrease at any time without prior notice.</p><p>Your continued use of the platform constitutes your acceptance of the rate in effect at the time of each individual transaction. No retroactive rate adjustments will be made after a transaction is initiated.</p>`,
+                    ar: `<p class="mb-4">سعر صرف النجوم متغير ويتحدد حسب ظروف السوق السائدة، بما في ذلك ديناميكيات العرض والطلب. قد تزيد الأسعار أو تنقص في أي وقت دون إشعار مسبق.</p><p>يشكل استمرارك في استخدام المنصة قبولاً للسعر الساري وقت كل معاملة فردية. لن يتم إجراء أي تعديلات على الأسعار بأثر رجعي بعد بدء المعاملة.</p>`,
+                    ru: `<p class="mb-4">Обменный курс Stars является переменным и определяется преобладающими рыночными условиями, включая динамику спроса и предложения. Курсы могут увеличиваться или уменьшаться в любое время без предварительного уведомления.</p><p>Ваше дальнейшее использование платформы означает ваше согласие с курсом, действующим на момент каждой отдельной транзакции. Никакие ретроактивные корректировки курса не будут производиться после начала транзакции.</p>`
+                }
+            },
+            {
+                id: "art8", icon: ICONS.document,
+                title: { en: "General Acceptance", ar: "القبول العام", ru: "Общее согласие" },
+                content: {
+                    en: `<p class="mb-4">By using this bot or initiating any transaction through it, you confirm that you have read, understood, and agree to be bound by these Terms of Service in their entirety.</p><p>Continued use of the platform constitutes ongoing and unconditional acceptance of the most current version of these Terms. If you do not agree with any provision, you must discontinue use of the platform immediately.</p>`,
+                    ar: `<p class="mb-4">باستخدامك لهذا البوت أو بدء أي معاملة من خلاله، فإنك تؤكد أنك قرأت وفهمت ووافقت على الالتزام بشروط الخدمة هذه بالكامل.</p><p>يشكل استمرارك في استخدام المنصة قبولاً مستمراً وغير مشروط لأحدث إصدار من هذه الشروط. إذا كنت لا توافق على أي حكم، يجب عليك التوقف عن استخدام المنصة على الفور.</p>`,
+                    ru: `<p class="mb-4">Используя этот бот или инициируя любую транзакцию через него, вы подтверждаете, что прочитали, поняли и соглашаетесь быть связанными настоящими Условиями обслуживания в полном объеме.</p><p>Продолжение использования платформы представляет собой постоянное и безоговорочное принятие самой последней версии настоящих Условий. Если вы не согласны с каким-либо положением, вы должны немедленно прекратить использование платформы.</p>`
+                }
+            },
+            {
+                id: "art9", icon: ICONS.star,
+                title: { en: "Telegram Profile Rating & Payout Delay", ar: "تقييم ملف تيليجرام وتأخير الدفع", ru: "Рейтинг профиля Telegram и задержка выплат" },
+                content: {
+                    en: `<div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Administrative Payout Delay</strong>If the platform detects a negative Telegram Profile Rating for a user account, the administrator reserves the right to delay the payout delivery for a period of up to <strong>seventeen (17) days</strong>. This duration is strictly enforced to ensure transaction safety and protect the platform's rights against unreliable payments.<br><span class="text-sm mt-1 block">This measure exists as a proportionate risk-management mechanism and does not constitute a forfeiture of funds.</span></div><p>A negative rating does not automatically result in account suspension; however, it may be combined with other enforcement measures outlined in these Terms. Improving your Telegram Profile Rating will restore standard processing times.</p>`,
+                    ar: `<div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">تأخير الدفع الإداري</strong>إذا اكتشفت المنصة تقييماً سلبياً لملف تيليجرام الخاص بالمستخدم، يحتفظ المسؤول بالحق في تأخير تسليم الدفع لمدة تصل إلى <strong>سبعة عشر (١٧) يوماً</strong>. يتم إنفاذ هذه المدة بصرامة لضمان سلامة المعاملة وحماية حقوق المنصة ضد المدفوعات غير الموثوقة.<br><span class="text-sm mt-1 block">هذا الإجراء موجود كآلية متناسبة لإدارة المخاطر ولا يشكل مصادرة للأموال.</span></div><p>لا يؤدي التقييم السلبي تلقائيًا إلى تعليق الحساب؛ ومع ذلك، قد يقترن بتدابير إنفاذ أخرى موضحة في هذه الشروط. سيؤدي تحسين تقييم ملفك الشخصي في تيليجرام إلى استعادة أوقات المعالجة القياسية.</p>`,
+                    ru: `<div class="mb-4"><strong class="text-[var(--text-main)] block mb-1">Административная задержка выплаты</strong>Если платформа обнаруживает отрицательный рейтинг профиля Telegram у пользователя, администратор оставляет за собой право задержать выплату на срок до <strong>семнадцати (17) дней</strong>. Эта продолжительность строго соблюдается для обеспечения безопасности транзакции и защиты прав платформы от ненадежных платежей.<br><span class="text-sm mt-1 block">Эта мера существует как соразмерный механизм управления рисками и не означает конфискацию средств.</span></div><p>Отрицательный рейтинг не влечет за собой автоматическую приостановку действия аккаунта; однако он может применяться в сочетании с другими мерами принуждения, изложенными в настоящих Условиях. Улучшение вашего рейтинга профиля Telegram восстановит стандартное время обработки.</p>`
+                }
+            }
+        ];
+
+        // Dynamic Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('content-container');
+            
+            ARTICLES.forEach((art, index) => {
+                const num = (index + 1).toString().padStart(2, '0');
+                const isLast = index === ARTICLES.length - 1;
+                
+                container.innerHTML += `
+                    <section id="${art.id}" class="article ${isLast ? 'border-b-0 pb-10' : ''}">
+                        <div class="icon-wrap">${art.icon}</div>
+                        <h2 class="text-2xl font-bold mb-6">Article ${num}<br>
+                            <span class="text-[var(--text-muted)] text-xl font-normal lang-en">${art.title.en}</span>
+                            <span class="text-[var(--text-muted)] text-xl font-normal lang-ar">${art.title.ar}</span>
+                            <span class="text-[var(--text-muted)] text-xl font-normal lang-ru">${art.title.ru}</span>
+                        </h2>
+                        <div class="lang-en text-[var(--text-muted)]">${art.content.en}</div>
+                        <div class="lang-ar text-[var(--text-muted)]">${art.content.ar}</div>
+                        <div class="lang-ru text-[var(--text-muted)]">${art.content.ru}</div>
+                    </section>
+                `;
+            });
+
+            // Trigger lang setup
+            setLang('en', document.querySelector('.lang-btn.active'));
+        });
+
+        // Enhanced Theme Toggle Logic using View Transitions API
+        function toggleTheme(event) {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const themeIcon = document.getElementById('themeIcon');
+
+            function switchDOMTheme() {
+                html.setAttribute('data-theme', targetTheme);
+                if(targetTheme === 'dark') {
+                    themeIcon.innerHTML = `<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>`; // Moon
+                } else {
+                    themeIcon.innerHTML = `<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>`; // Sun
+                }
+            }
+
+            if (!document.startViewTransition) {
+                switchDOMTheme();
+                return;
+            }
+
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            const transition = document.startViewTransition(() => {
+                switchDOMTheme();
+            });
+
+            transition.ready.then(() => {
+                const maxDistanceX = Math.max(x, window.innerWidth - x);
+                const maxDistanceY = Math.max(y, window.innerHeight - y);
+                const endRadius = Math.hypot(maxDistanceX, maxDistanceY);
+
+                document.documentElement.animate(
+                    {
+                        clipPath: [
+                            `circle(0px at ${x}px ${y}px)`,
+                            `circle(${endRadius}px at ${x}px ${y}px)`
+                        ]
+                    },
+                    {
+                        duration: 600,
+                        easing: 'ease-in-out',
+                        pseudoElement: '::view-transition-new(root)'
+                    }
+                );
+            });
+        }
+
+        // Language Switcher Logic
+        function setLang(lang, btnElement) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+            
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            if (btnElement) btnElement.classList.add('active');
+
+            setTimeout(updateSidebarIndicator, 100);
+        }
+
+        // Acton-style Sidebar Tree Line Logic
+        function updateSidebarIndicator() {
+            const navLinks = Array.from(document.querySelectorAll('.sidebar-link'));
+            if(navLinks.length === 0) return;
+
+            const scrollPos = window.scrollY + 150; 
+            
+            let currentActiveLink = navLinks[0];
+
+            for (let link of navLinks) {
+                const targetId = link.getAttribute('href').substring(1);
+                const section = document.getElementById(targetId);
+                if (section && section.offsetTop <= scrollPos) {
+                    currentActiveLink = link;
+                }
+            }
+
+            // إصلاح مشكلة عدم وصول المؤشر للمقالة الأخيرة
+            // Check if user has scrolled to the absolute bottom of the page
+            if ((window.innerHeight + Math.round(window.scrollY)) >= document.documentElement.scrollHeight - 50) {
+                currentActiveLink = navLinks[navLinks.length - 1];
+            }
+
+            navLinks.forEach(link => link.classList.remove('active'));
+            currentActiveLink.classList.add('active');
+
+            const navContainer = document.getElementById('sidebar-nav');
+            const indicator = document.getElementById('sidebar-indicator');
+            
+            if (navContainer && indicator && currentActiveLink) {
+                const containerRect = navContainer.getBoundingClientRect();
+                const linkRect = currentActiveLink.getBoundingClientRect();
+                
+                const curveHeight = (linkRect.top - containerRect.top) + (linkRect.height / 2);
+                indicator.style.height = `${curveHeight}px`;
+            }
+        }
+
+        window.addEventListener('scroll', updateSidebarIndicator);
+        window.addEventListener('resize', updateSidebarIndicator);
+    </script>
+</body>
+</html>
