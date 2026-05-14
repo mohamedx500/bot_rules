@@ -254,6 +254,23 @@
             padding-top: env(safe-area-inset-top);
         }
         .contact-banner { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+
+        /* --- Bot Support Icon --- */
+        .bot-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            transition: filter 0.3s ease;
+            opacity: 0.8;
+        }
+        @media (min-width: 640px) {
+            .bot-icon {
+                width: 30px;
+                height: 30px;
+            }
+        }
+        [data-theme="light"] .bot-icon { filter: invert(1); }
+        [data-theme="dark"] .bot-icon { filter: none; }
     </style>
 </head>
 <body>
@@ -263,7 +280,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             <div class="flex items-center gap-2 sm:gap-3 overflow-hidden">
                 <div class="logo-container flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8">
-                    <img src="assets/icon_star.svg" alt="Logo" class="logo-star w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                    <img src="assets/icon_star.svg" alt="Logo" class="logo-star w-4 h-4 sm:w-[30px] sm:h-[30px]" />
                 </div>
                 <span class="font-bold tracking-tight text-[13px] sm:text-sm whitespace-nowrap truncate max-w-[110px] sm:max-w-none">Stars Converter Bot</span>
             </div>
@@ -321,7 +338,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div class="flex items-start md:items-center gap-3 sm:gap-4">
                 <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[var(--surface-border)] flex-shrink-0 flex items-center justify-center mt-1 md:mt-0">
-                    <svg width="16" height="16" class="sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <img src="assets/bot.svg" alt="Bot Support" class="bot-icon" />
                 </div>
                 <div>
                     <h4 class="font-bold text-sm sm:text-base text-[var(--text-main)] lang-en">Need help or have a dispute?</h4>
